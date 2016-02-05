@@ -12,9 +12,11 @@ def auto_load(interval=5):
 	for f in os.listdir(path):
 		module = '{}.{}'.format(exploitdir, f.split('.')[0])
 		importlib.import_module(module)
+
 	with open('conf.json', 'r') as f:
 		conf = json.loads(f.read())
 	scheduler.ips = conf["ips"]
+	scheduler.omitted = conf["omitted"]
 
 auto_load()
 scheduler.launch()
