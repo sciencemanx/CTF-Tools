@@ -1,0 +1,17 @@
+body {
+  padding-top: 70px;
+  padding-bottom: 30px;
+}
+
+.glyphicon-ok {
+  color: green;
+}
+
+.glyphicon-remove {
+  color: red;
+}
+
+#editor {
+	width: 500px;
+  height: 400px;
+}

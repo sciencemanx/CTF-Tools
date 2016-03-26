@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+  <script src="{{ url_for('static', filename='main.js') }}" type="text/javascript"></script>
+{% endblock %}
+
+{% block app %}launcher-app{% endblock %}
+{% block title %}Exploits{% endblock %}
+
+{% block content %}
+  <div >
+    <table class="table table-striped" ng-controller="exploit-ctrl">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th ng-repeat="ip in ips">[[ ip ]]</th>
+          <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="exploit in exploits">
+          <td class="col-md-3">[[ exploit.name ]]</td>
+          <td class="col-md-2">[[ exploit.type ]]</td>
+          <td ng-repeat="status in exploit.statuses track by $index" class="col-md-2">
+            <span ng-if="status == 'success'" class="glyphicon glyphicon-ok"></span>
+            <span ng-if="status == 'no-flag'" class="glyphicon glyphicon-remove">
+          </td>
+          <td class="col-md-2">
+            <a href="/editexploit/[[exploit.name]]"><span class="glyphicon glyphicon-pencil"></span></a>
+            <a href="/deleteexploit/[[exploit.name]]"><span class="glyphicon glyphicon-trash"></span></a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
