@@ -11,7 +11,12 @@ body {
   color: red;
 }
 
+.glyphicon-alert {
+  color: orange;
+}
+
 #editor {
-	width: 500px;
+	width: 95%;
   height: 400px;
+  margin: 2.5%;
 }

@@ -26,7 +26,9 @@
           <td class="col-md-2">[[ exploit.type ]]</td>
           <td ng-repeat="status in exploit.statuses track by $index" class="col-md-2">
             <span ng-if="status == 'success'" class="glyphicon glyphicon-ok"></span>
-            <span ng-if="status == 'no-flag'" class="glyphicon glyphicon-remove">
+            <span ng-if="status == 'no-flag'" class="glyphicon glyphicon-remove"></span>
+            <span ng-if="status == 'error'" class="glyphicon glyphicon-alert" data-toggle="tooltip" title="[[ exploit.tooltips[$index] ]]"></span>
+            <span ng-if="status == 'working'" class="glyphicon glyphicon-hourglass"></span>
           </td>
           <td class="col-md-2">
             <a href="/editexploit/[[exploit.name]]"><span class="glyphicon glyphicon-pencil"></span></a>

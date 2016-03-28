@@ -3,19 +3,25 @@ var app = angular.module('launcher-app', [], function($interpolateProvider) {
   $interpolateProvider.endSymbol(']]');
 });
 
+var url = window.location.href + 'ws';
+var socket = io.connect(url);
+
 app.controller('exploit-ctrl', function($scope, $http) {
-  var update_exploits = function() {
-    $http.get("/exploits").then(function(response) {
-      $scope.exploits = response.data;
-    });
-    setTimeout(update_exploits, 2000);
-  };
-  var update_ips = function() {
-    $http.get("/ips").then(function(response) {
-      $scope.ips = response.data;
-    });
-    setTimeout(update_ips, 2000);
-  }
-  update_exploits();
-  update_ips();
+  socket.on('exploits', function(exploits) {
+    $scope.exploits = exploits;
+    //console.log(exploits);
+    $scope.$apply();
+    $('[data-toggle="tooltip"]').tooltip();
+  });
+  socket.on('exploit', function(exploit) {
+    console.log(exploit);
+    var name = exploit.name;
+    var index = $scope.exploits.findIndex(function(otherExploit) {return name == otherExploit.name;});
+    $scope.exploits[index] = exploit;
+  })
+  socket.on('ips', function(ips) {
+    $scope.ips = ips;
+    //console.log('ips');
+    $scope.$apply();
+  });
 });
