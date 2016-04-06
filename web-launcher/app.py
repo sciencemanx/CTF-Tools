@@ -31,9 +31,32 @@ def edit_exploit(name):
 	exploit = launcher.get_exploit(name)
 	return render_template('addexploit.html', addedit='Edit', exploit=exploit)
 
+@app.route('/ips')
+def ips():
+	return render_template('ips.html', id='ips')
+
 @socketio.on('connect', namespace='/ws')
 def connected():
 	update_exploits(launcher.get_exploits())
+	update_ips()
+
+@socketio.on('delete-exploit', namespace='/ws')
+def delete_exploit(json):
+	print('deleting exploit')
+	name = json['name']
+	launcher.delete_exploit(name)
+	update_exploits(launcher.get_exploits())
+
+@socketio.on('add-ip', namespace='/ws')
+def add_ip(json):
+	ip = json['ip']
+	launcher.add_ip(ip)
+	update_ips()
+
+@socketio.on('delete-ip', namespace='/ws')
+def delete_ip(json):
+	ip = json['ip']
+	launcher.delete_ip(ip)
 	update_ips()
 
 def update_exploit(exploit):

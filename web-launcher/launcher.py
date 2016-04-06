@@ -1,5 +1,4 @@
 from collections import OrderedDict
-# import sqlite3
 import time
 from concurrent import futures
 
@@ -12,6 +11,7 @@ class Exploit:
 		self.tooltips = {ip: 'No yet run' for ip in ips}
 
 	def run(self, ip, sendone):
+		self.tooltips[ip] = ''
 		self.statuses[ip] = 'working'
 		sendone(self.to_dict())
 		local = {}
@@ -35,19 +35,14 @@ class Exploit:
 		tooltips = [self.tooltips[ip] for ip in ips]
 		return {'name': self.name, 'type': self.kind, 'statuses': statuses, 'tooltips': tooltips}
 
-# def adapt_exploit(exploit):
-# 	return '{}}{{}}{{}'.format(exploit.name, exploit.kind, exploit.code)
-
-# def convert_exploit(s):
-# 	name, kind, code = s.split(b'}{')
-# 	return Exploit(name, kind, code)
 
 def submit(flag):
 	pass
 
 def add_exploit(name, kind, code):
-	exploit = Exploit(name, kind, code)
-	exploits[name] = exploit
+	if len(name) > 0:
+		exploit = Exploit(name, kind, code)
+		exploits[name] = exploit
 
 def delete_exploit(name):
 	exploits.pop(name)
@@ -58,7 +53,12 @@ def get_exploit(name):
 def get_exploits():
 	return [exploit.to_dict() for exploit in exploits.values()]
 
-# db = sqlite3.connect(':memory:', check_same_thread=False)
+def add_ip(ip):
+	if ip not in ips:
+		ips.append(ip)
+
+def delete_ip(ip):
+	ips.remove(ip)
 
 ips = ['10.0.64.27', 'localhost', '127.0.0.1', '192.168.0.1'];
 exploits = OrderedDict()

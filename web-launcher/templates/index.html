@@ -20,7 +20,7 @@
           <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="exploits">
         <tr ng-repeat="exploit in exploits">
           <td class="col-md-3">[[ exploit.name ]]</td>
           <td class="col-md-2">[[ exploit.type ]]</td>
@@ -31,8 +31,8 @@
             <span ng-if="status == 'working'" class="glyphicon glyphicon-hourglass"></span>
           </td>
           <td class="col-md-2">
-            <a href="/editexploit/[[exploit.name]]"><span class="glyphicon glyphicon-pencil"></span></a>
-            <a href="/deleteexploit/[[exploit.name]]"><span class="glyphicon glyphicon-trash"></span></a>
+            <a href="/editexploit/[[ exploit.name ]]"><span class="glyphicon glyphicon-pencil"></span></a>
+            <a href="#" class="exploit" id="[[ exploit.name ]]"><span class="glyphicon glyphicon-trash"></span></a>
           </td>
         </tr>
       </tbody>
