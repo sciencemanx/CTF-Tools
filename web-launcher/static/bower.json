@@ -1,0 +1,31 @@
+{
+  "name": "web-launcher",
+  "homepage": "https://github.com/docileninja/CTF-Tools",
+  "authors": [
+    "Adam Van Prooyen <adam.vanpr@gmail.com>"
+  ],
+  "description": "A web launcher framework for attack-defend CTFs",
+  "main": "",
+  "moduleType": [],
+  "keywords": [
+    "attack",
+    "defend",
+    "capture",
+    "the",
+    "flag",
+    "flage",
+    "web",
+    "launcher"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "ace-builds-bower-patched": "^1.2.2"
+  }
+}
