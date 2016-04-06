@@ -23,7 +23,8 @@ def add_exploit():
 	else:
 		name = request.form['name']
 		code = request.form['code']
-		launcher.add_exploit(name, 'HTTP', code)
+		kind = request.form['kind']
+		launcher.add_exploit(name, kind, code)
 		return redirect(url_for('launcher_status'))
 
 @app.route('/editexploit/<name>')
@@ -68,9 +69,12 @@ def update_exploits(exploits):
 def update_ips():
 	socketio.emit('ips', launcher.ips, namespace='/ws')
 
-if __name__ == '__main__':
+def main():
 	thread = Thread(target=launcher.launch, args=(5, update_exploits, update_exploit))
 	thread.daemon = True
 	thread.start()
 	socketio.run(app, debug=True)
+
+if __name__ == '__main__':
+	main()
 	

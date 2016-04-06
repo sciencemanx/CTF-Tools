@@ -1,9 +1,12 @@
 from collections import OrderedDict
 import time
 from concurrent import futures
+import os
+import binascii
 
 class Exploit:
-	def __init__(self, name, kind, code):
+	def __init__(self, uid, name, kind, code):
+		self.uid = uid
 		self.name = name
 		self.kind = kind
 		self.code = code
@@ -30,25 +33,33 @@ class Exploit:
 				self.statuses[ip] = 'no-flag'
 		sendone(self.to_dict())
 
+	def __repr__(self):
+		return 'Exploit({}, {}, {})'.format(self.uid, self.name, self.kind)
+
 	def to_dict(self):
 		statuses = [self.statuses[ip] for ip in ips]
 		tooltips = [self.tooltips[ip] for ip in ips]
-		return {'name': self.name, 'type': self.kind, 'statuses': statuses, 'tooltips': tooltips}
+		return { 'uid': self.uid,
+				 'name': self.name, 
+				 'type': self.kind, 
+				 'statuses': statuses, 
+				 'tooltips': tooltips }
 
 
 def submit(flag):
 	pass
 
 def add_exploit(name, kind, code):
-	if len(name) > 0:
-		exploit = Exploit(name, kind, code)
-		exploits[name] = exploit
+	uid = str(binascii.b2a_hex(os.urandom(8)), encoding='utf-8')
+	if len(name) > 0 and len(kind) > 0:
+		exploit = Exploit(uid, name, kind, code)
+		exploits[uid] = exploit
 
-def delete_exploit(name):
-	exploits.pop(name)
+def delete_exploit(uid):
+	exploits.pop(uid)
 
-def get_exploit(name):
-	return exploits[name]
+def get_exploit(uid):
+	return exploits[uid]
 
 def get_exploits():
 	return [exploit.to_dict() for exploit in exploits.values()]

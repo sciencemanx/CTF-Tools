@@ -14,8 +14,8 @@
     <table class="table table-striped" ng-controller="exploit-ctrl">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Type</th>
+          <th>Service</th>
+          <th>Vuln</th>
           <th ng-repeat="ip in ips">[[ ip ]]</th>
           <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
         </tr>
@@ -31,8 +31,8 @@
             <span ng-if="status == 'working'" class="glyphicon glyphicon-hourglass"></span>
           </td>
           <td class="col-md-2">
-            <a href="/editexploit/[[ exploit.name ]]"><span class="glyphicon glyphicon-pencil"></span></a>
-            <a href="#" class="exploit" id="[[ exploit.name ]]"><span class="glyphicon glyphicon-trash"></span></a>
+            <a href="/editexploit/[[ exploit.uid ]]"><span class="glyphicon glyphicon-pencil"></span></a>
+            <a href="#" class="exploit" id="[[ exploit.uid ]]"><span class="glyphicon glyphicon-trash"></span></a>
           </td>
         </tr>
       </tbody>
