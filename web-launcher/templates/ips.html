@@ -26,9 +26,17 @@
           </td>
         </tr>
         <tr>
-          <form action="/addip" method="POST">
-            <td><label for="ip">New IP: </label><input name="ip" id="new-ip" type="text"></td>
-            <td><input type="submit" id="add-ip"></td>
+          <form>
+            <td>
+              <div class="input-group">
+                <label for="new-ip" class="input-group-addon">New IP: </label>
+                <input class="form-control" name="ip" id="new-ip" type="text">
+              </div>
+            </td>
+            <td>
+              <!-- <button type="button" class="btn btn-danger btn-sm" id="add-ip"> -->
+              <input type="submit" class="btn btn-danger btn-md" id="add-ip">
+            </td>
           </form>
         </tr>
       </tbody>

@@ -1,4 +1,4 @@
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 import time
 from concurrent import futures
 import os
@@ -11,8 +11,8 @@ class Exploit:
 		self.name = name
 		self.kind = kind
 		self.code = code
-		self.statuses = {ip: 'error' for ip in ips}
-		self.tooltips = {ip: 'No yet run' for ip in ips}
+		self.statuses = defaultdict(lambda: 'error') # fixes error where ip not yet run
+		self.tooltips = defaultdict(lambda: 'Not yet run')
 
 	def run(self, ip, sendone):
 		self.tooltips[ip] = ''
@@ -53,18 +53,18 @@ def submit(flag):
 def add_exploit(name, kind, code, uid = None):
 	if len(name) == 0 or len(kind) == 0:
 		return
-	gen_uid = uid or str(binascii.b2a_hex(os.urandom(8)), encoding='utf-8')
-	exploit = Exploit(gen_uid, name, kind, code)
+	uid = uid or str(binascii.b2a_hex(os.urandom(8)), encoding='utf-8')
+	exploit = Exploit(uid, name, kind, code)
 	print('created exploit: {}'.format(exploit))
-	exploits[gen_uid] = exploit
-	if not uid:
-		print('adding exploit to database')
-		cur = db.cursor()
+	exploits[uid] = exploit
+	cur = db.cursor()
+	try:
 		cur.execute('INSERT INTO exploits VALUES (?, ?, ?, ?)',
-				     (gen_uid, name, kind, code))
+				     (uid, name, kind, code))
+	except sqlite3.IntegrityError:
+		print('exploit already in db -- this is ok')
+	else:
 		db.commit()
-
-	return exploit
 
 def delete_exploit(uid):
 	exploits.pop(uid)
@@ -79,30 +79,47 @@ def get_exploits():
 	return [exploit.to_dict() for exploit in exploits.values()]
 
 def add_ip(ip):
+	cur = db.cursor()
+	try:
+		cur.execute('INSERT INTO ips VALUES (?)', (ip,))
+	except sqlite3.IntegrityError:
+		print('already had ip in table -- this is ok')
+	else:
+		db.commit()
 	if ip not in ips:
 		ips.append(ip)
 
 def delete_ip(ip):
 	ips.remove(ip)
+	cur = db.cursor()
+	cur.execute('DELETE FROM ips WHERE ip = ?', (ip,))
+	db.commit()
 
 ips = ['10.0.64.27', 'localhost', '127.0.0.1', '192.168.0.1'];
 exploits = OrderedDict()
 interval = 5
 
-db = sqlite3.connect('exploits.db')
+db = None
 
-def load_exploits():
-	print('loading exploits from db')
+def load_from_db(db_name='exploits.db'):
+	global db
+	db = sqlite3.connect(db_name)
+
 	cur = db.cursor()
 	cur.execute('CREATE TABLE IF NOT EXISTS exploits \
-				 (uid TEXT PRIMARY KEY, name TEXT, kind TEXT, code TEXT);')
+				 (uid TEXT PRIMARY KEY, name TEXT, kind TEXT, code TEXT)')
+	cur.execute('CREATE TABLE IF NOT EXISTS ips \
+				 (ip TEXT PRIMARY KEY)')
 	db.commit()
+
 	for exploit in cur.execute('SELECT * FROM exploits'):
-		print('loading exploit from database: {}'.format(exploit))
 		add_exploit(exploit[1], exploit[2], exploit[3], uid=exploit[0])
+	for ip in cur.execute('SELECT * FROM ips'):
+		add_ip(ip[0])
 
 def launch(interval, sendall, sendone):
-	load_exploits()
+	load_from_db()
+	# add_exploit('SQLi', 'VULN', 'def exploit(ip): return "flage"')
 	while True:
 		time.sleep(interval)
 		with futures.ThreadPoolExecutor(4) as executor:

@@ -10,7 +10,7 @@
 {% block title %}Exploits{% endblock %}
 
 {% block content %}
-  <div >
+  <div>
     <table class="table table-striped" ng-controller="exploit-ctrl">
       <thead>
         <tr>
@@ -22,18 +22,32 @@
       </thead>
       <tbody id="exploits">
         <tr ng-repeat="exploit in exploits">
-          <td class="col-md-3">[[ exploit.name ]]</td>
-          <td class="col-md-2">[[ exploit.type ]]</td>
+          <td class="col-sm-2">[[ exploit.name ]]</td>
+          <td class="col-sm-1">[[ exploit.type ]]</td>
           <td ng-repeat="status in exploit.statuses track by $index" class="col-md-2">
             <span ng-if="status == 'success'" class="glyphicon glyphicon-ok"></span>
             <span ng-if="status == 'no-flag'" class="glyphicon glyphicon-remove"></span>
             <span ng-if="status == 'error'" class="glyphicon glyphicon-alert" data-toggle="tooltip" title="[[ exploit.tooltips[$index] ]]"></span>
             <span ng-if="status == 'working'" class="glyphicon glyphicon-hourglass"></span>
           </td>
-          <td class="col-md-2">
-            <a href="/editexploit/[[ exploit.uid ]]"><span class="glyphicon glyphicon-pencil"></span></a>
-            <a href="#" class="exploit" id="[[ exploit.uid ]]"><span class="glyphicon glyphicon-trash"></span></a>
+          <td class="col-sm-1">
+            <a href="/editexploit/[[ exploit.uid ]]">
+              <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+            <a href="#" class="exploit" id="[[ exploit.uid ]]">
+              <span class="glyphicon glyphicon-trash"></span>
+            </a>
           </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="/addexploit">
+              <button type="button" class="btn btn-danger btn-sm">Add Exploit</button>
+            </a>
+          </td>
+          <td></td>
+          <td ng-repeat="ip in ips"></td>
+          <td></td>
         </tr>
       </tbody>
     </table>
