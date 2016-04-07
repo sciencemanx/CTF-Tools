@@ -3,6 +3,7 @@ import time
 from concurrent import futures
 import os
 import binascii
+import sqlite3
 
 class Exploit:
 	def __init__(self, uid, name, kind, code):
@@ -49,14 +50,27 @@ class Exploit:
 def submit(flag):
 	pass
 
-def add_exploit(name, kind, code):
-	uid = str(binascii.b2a_hex(os.urandom(8)), encoding='utf-8')
-	if len(name) > 0 and len(kind) > 0:
-		exploit = Exploit(uid, name, kind, code)
-		exploits[uid] = exploit
+def add_exploit(name, kind, code, uid = None):
+	if len(name) == 0 or len(kind) == 0:
+		return
+	gen_uid = uid or str(binascii.b2a_hex(os.urandom(8)), encoding='utf-8')
+	exploit = Exploit(gen_uid, name, kind, code)
+	print('created exploit: {}'.format(exploit))
+	exploits[gen_uid] = exploit
+	if not uid:
+		print('adding exploit to database')
+		cur = db.cursor()
+		cur.execute('INSERT INTO exploits VALUES (?, ?, ?, ?)',
+				     (gen_uid, name, kind, code))
+		db.commit()
+
+	return exploit
 
 def delete_exploit(uid):
 	exploits.pop(uid)
+	cur = db.cursor()
+	cur.execute('DELETE FROM exploits WHERE uid = ?', (uid,))
+	db.commit()
 
 def get_exploit(uid):
 	return exploits[uid]
@@ -75,9 +89,20 @@ ips = ['10.0.64.27', 'localhost', '127.0.0.1', '192.168.0.1'];
 exploits = OrderedDict()
 interval = 5
 
-add_exploit('SQLi', 'VULN', 'def exploit(ip): return "flage"')
+db = sqlite3.connect('exploits.db')
+
+def load_exploits():
+	print('loading exploits from db')
+	cur = db.cursor()
+	cur.execute('CREATE TABLE IF NOT EXISTS exploits \
+				 (uid TEXT PRIMARY KEY, name TEXT, kind TEXT, code TEXT);')
+	db.commit()
+	for exploit in cur.execute('SELECT * FROM exploits'):
+		print('loading exploit from database: {}'.format(exploit))
+		add_exploit(exploit[1], exploit[2], exploit[3], uid=exploit[0])
 
 def launch(interval, sendall, sendone):
+	load_exploits()
 	while True:
 		time.sleep(interval)
 		with futures.ThreadPoolExecutor(4) as executor:
